@@ -1,8 +1,8 @@
 .DS_Store
 node_modules
 /dist
-/db/db.ts
-/db/mongo.ts
+/src/db/db.ts
+/src/db/mongo.ts
 # local env files
 .env.local
 .env.*.local
