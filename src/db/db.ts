@@ -3,11 +3,7 @@ import async from 'async'
 // import mysqlConfig from '../config/mysql'
 
 const pool = mysql.createPool({
-  user: 'root',
-  host: '122.51.77.238',
-  password: '123456',
-  database: 'mysite',
-  port: 33306
+
 });
 // console.log(mysqlConfig())
 interface SqlResponse {
