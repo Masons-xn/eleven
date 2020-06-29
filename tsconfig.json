@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "target": "es5",
+    "module": "commonjs",
+    "lib": ["dom", "es6"],
+    "outDir": "./dist",
+    "strict": true,
+    // "declaration": true,
+    "inlineSourceMap": true,
+    "removeComments": false, //编译 js 的时候，删除掉注释
+    "noUnusedLocals": true,
+    "moduleResolution": "node",
+    "version": true,
+    // "emitDecoratorMetadata": true,
+    // "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true,
+    "types": ["node", "md5", "mysql"]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/*.test.ts"],
+  "types": ["md5", "mysql"]
+}

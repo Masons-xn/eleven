@@ -1,0 +1,44 @@
+{
+  "name": "faster",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rimraf dist && gulp build"
+  },
+  "author": "luoxining",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/async": "^3.2.3",
+    "@types/express": "^4.17.6",
+    "@types/lodash": "^4.14.157",
+    "@types/md5": "^2.2.0",
+    "@types/mysql": "^2.15.14",
+    "@types/node": "^14.0.14",
+    "express-async-errors": "^3.1.1",
+    "gulp": "^4.0.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-file-include": "^2.2.2",
+    "gulp-nodemon": "^2.5.0",
+    "gulp-rename": "^2.0.0",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-typescript": "^6.0.0-alpha.1",
+    "gulp-uglify": "^3.0.2",
+    "jsonwebtoken": "^8.5.1",
+    "rimraf": "^3.0.2",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.5",
+    "vinyl-buffer": "^1.0.1"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "formidable": "^1.2.2",
+    "lodash": "^4.17.15",
+    "md5": "^2.2.1",
+    "mongodb": "^3.5.9",
+    "mysql": "^2.18.1",
+    "winston": "^3.3.3",
+    "winston-daily-rotate-file": "^4.5.0"
+  }
+}
