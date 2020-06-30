@@ -10,7 +10,7 @@
 
 项目启动或者 初始化的时候，会自动的自动检查数据库，根据上述三张表的数据 对现有的数据库进行调整 增加表，增删改 字段 默认会有 id, create 和 update time
 
-![avatar](http://baidu.com/pic/doge.png)
+![avatar](http://122.51.77.238/api/upload/get?id=7c8981faf1343c9aa9167e5413b93c2c)
 
 
 ### 动态接口
