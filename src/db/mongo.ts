@@ -3,7 +3,11 @@ var MongoClient = require('mongodb').MongoClient;
 // var url = "mongodb://root:123456@:27017/mongo";
 // const client = new MongoClient(url, { useNewUrlParser: true });
 const config = {
-
+  address: '122.51.77.238',
+  port: '27017',
+  database: 'mongo',
+  username: 'root',
+  password: '123456'
 }
 
 // MongoClient.connect(url, { useNewUrlParser: true }, function (err: any, db: { close: () => void; }) {

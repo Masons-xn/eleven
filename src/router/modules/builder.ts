@@ -52,30 +52,72 @@ class Test extends Service {
     })
     if (!param.base._id) {
       return Promise.resolve(mongo.add("page", { path: param.base.path, value: JSON.stringify(param.base) })).then((_res) => {
-        return { code: '200', data: _res }
+        if (_res.result && _res.result.ok === 1) {
+          return { code: '200', data: _res }
+        } else {
+          return { code: '500', data: _res }
+        }
       })
     } else {
       return Promise.resolve(mongo.update("page", { path: param.base.path }, { path: param.base.path, value: JSON.stringify(param.base) })).then((_res) => {
-        return { code: '200', data: _res }
+        if (_res.result && _res.result.ok === 1) {
+          return { code: '200', data: _res }
+        } else {
+          return { code: '500', data: _res }
+        }
       })
     }
   }
   @Method('/query')
   queryPage(param: any): any {
-    return Promise.resolve(mongo.find("page", { path: param.path })).then((_res) => {
-      if (_res.length > 0) {
-        const data = JSON.parse(_res[0].value)
-        data._id = _res[0]._id
-        return {
-          result: data
+    if (param.path) {
+      return Promise.resolve(mongo.find("page", { path: param.path })).then((_res) => {
+        if (_res.length > 0) {
+          const data = JSON.parse(_res[0].value)
+          data._id = _res[0]._id
+          return {
+            result: data
+          }
+        } else {
+          return {
+            result: []
+          }
         }
-      } else {
-        return {
-          result: []
+        return _res
+      })
+    } else {
+      return Promise.resolve(mongo.find("page", {})).then((_res) => {
+        if (_res.length > 0) {
+          _res.map((item: any) => {
+            const data = JSON.parse(item.value)
+            for (let i in data) {
+              if (i !== "id" && i !== "_id") {
+                item[i] = data[i]
+              }
+            }
+          })
+          return {
+            result: { list: _res }
+          }
+        } else {
+          return {
+            result: []
+          }
         }
-      }
-      return _res
-    })
+        return _res
+      })
+    }
+  }
+  @Method('/remove')
+  remove(param: any): any {
+    return { code: '500', data: "", msg: "造点数据不易，手下留情" }
+    if (param.data) {
+      return Promise.resolve(mongo.remove("page", { path: param.data })).then((_res) => {
+        return { code: '200', data: _res }
+      })
+    } else {
+      return { code: '500', data: "参数错误" }
+    }
   }
 }
 export default new Test()

@@ -12,25 +12,30 @@ let pool: any = {}
 const clientCheck: boolean = false
 require('express-async-errors')
 const Call = (method: string, param: object, _req: express.Request, _res: express.Response) => {
-  try {
-    if (method.indexOf('uploadimage') > -1) {
-      Promise.resolve(pool[method]({ req: _req, param })).then(res => {
-        _res.send(res)
-      }).catch(res => {
-        _res.send(res)
-      })
-    } else if (method.indexOf('uploadget') > -1) {
-      pool[method]({ req: _req, param, res: _res })
-    } else {
-      Promise.resolve(pool[method](param)).then(res => {
-        _res.send(res)
-      }).catch(res => {
-        _res.send(res)
-      })
+  if (pool[method]) {
+    try {
+      if (method.indexOf('uploadimage') > -1) {
+        Promise.resolve(pool[method]({ req: _req, param })).then(res => {
+          _res.send(res)
+        }).catch(res => {
+          _res.send(res)
+        })
+      } else if (method.indexOf('uploadget') > -1) {
+        pool[method]({ req: _req, param, res: _res })
+      } else {
+        Promise.resolve(pool[method](param)).then(res => {
+          _res.send(res)
+        }).catch(res => {
+          _res.send(res)
+        })
+      }
+    } catch (e) {
+      _res.send({ code: '500', message: ` ${method} is error:${JSON.stringify(e)}!` })
     }
-  } catch (e) {
-    _res.send({ code: '500', message: ` ${method} is error:${JSON.stringify(e)}!` })
+  } else {
+    _res.send({ code: '500', message: ` not find!` })
   }
+
 
 }
 function getPath(url: string): string {
