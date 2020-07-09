@@ -6,6 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "gulp dev",
+    "build:tsc": "rimraf dist && tsc",
+    "dev：debug": "nodemon src/entry.ts",
+    "dev:debug": "nodemon --inspect src/entry.ts",
     "build": "rimraf dist && gulp build"
   },
   "author": "luoxining",
