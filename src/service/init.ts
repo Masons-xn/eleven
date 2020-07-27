@@ -1,5 +1,4 @@
 import getModel from '../db/model'
-import getService from '../db/service'
 import Service from './service'
 import { Method } from '../router/decoratord'
 import query from './query'
@@ -186,31 +185,8 @@ export class Base extends Service {
     })
   }
 }
+
 export function service(): object {
-  return getModel().then(res => {
-    model = res
-    let service: any = {}
-    return getService().then(_res => {
-      for (let m in model) {
-        let base: any = new Base(model[m])
-        innerService[`${m}`] = {}
-        for (let key in base) {
-          //&& _res.indexOf(key) > -1
-          if (key.indexOf('/') > -1) {
-            service[`${m.toLowerCase()}${key.toLowerCase().replace(/\//g, '')}`] = function (param: any) {
-              return base[key].call(base, param)
-            }
-            innerService[`${m}`][`${key.replace(/\//g, '')}`] = (param: any) => {
-              return base[key].call(base, param)
-            }
-          }
-        }
-      }
-      return service
-    })
-  })
-}
-function getServiceAll(): object {
   return getModel().then(res => {
     model = res
     let service: any = {}
@@ -219,15 +195,17 @@ function getServiceAll(): object {
       innerService[`${m}`] = {}
       for (let key in base) {
         if (key.indexOf('/') > -1) {
-          if (!service[`${m}`]) {
-            service[`${m}`] = {}
+          service[`${m.toLowerCase()}${key.toLowerCase().replace(/\//g, '')}`] = function (param: any) {
+            return base[key].call(base, param)
           }
-          //${key.toLowerCase().replace(/\//g, '')}
-          service[`${m}`][`${key.toLowerCase().replace(/\//g, '')}`] = {}
+          innerService[`${m}`][`${key.replace(/\//g, '')}`] = (param: any) => {
+            return base[key].call(base, param)
+          }
         }
       }
     }
     return service
   })
 }
-export { innerService, getServiceAll } 
+
+export { innerService } 

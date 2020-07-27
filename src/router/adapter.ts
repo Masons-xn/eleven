@@ -9,7 +9,6 @@ import Visit from '../core/request'
 let poollocal: any = {}
 let poolbase: any = {}
 let pool: any = {}
-let localAll: any = {}
 const clientCheck: boolean = false
 require('express-async-errors')
 const Call = (method: string, param: object, _req: express.Request, _res: express.Response) => {
@@ -74,7 +73,7 @@ export function Adapter(_req: express.Request, res: express.Response): any {
   Call(getPath(_req.originalUrl).replace('/api', ""), getParam(_req), _req, res)
 }
 function baseServiceInit() {
-  return Promise.resolve(service()).then((res) => {
+  Promise.resolve(service()).then((res) => {
     const poolbase = res
     pool = Object.assign(poollocal, poolbase)
     logger.info('model API is load')
@@ -94,11 +93,6 @@ function readFold(foldPath: string) {
           method[key.toLowerCase().replace(/\//g, '')] = function (param: any) {
             return module[key].call(module, param)
           }
-          const serviceMethod = key.substr(1, key.length - 1).split("/")
-          if (!localAll[serviceMethod[0]]) {
-            localAll[serviceMethod[0]] = {}
-          }
-          localAll[serviceMethod[0]][serviceMethod[1]] = {}
         }
       }
       poollocal = Object.assign(method, poollocal)
@@ -109,5 +103,5 @@ function readFold(foldPath: string) {
 }
 readFold('/modules')
 export function baseService() {
-  return localAll
+  baseServiceInit()
 }

@@ -3,7 +3,6 @@ import Service from "../../service/service";
 import guid from "../../utils/guid";
 import base from '../../db/init'
 import { baseService } from '../adapter'
-import { getServiceAll } from '../../service/init'
 
 @Path('/model')
 class Model extends Service {
@@ -245,8 +244,9 @@ class Model extends Service {
     })
   }
   @Method('/initModel')
-  initModel(): any {
+  init(): any {
     return Promise.resolve(base()).then((_res) => {
+      baseService()
       return {
         code: '200',
         message: '',
@@ -255,24 +255,5 @@ class Model extends Service {
       }
     })
   }
-  @Method('/getServiceAll')
-  getServiceAll(): any {
-    return Promise.all([baseService(), getServiceAll()]).then((values) => {
-      return {
-        code: '200',
-        message: '',
-        data: Object.assign(values[0], values[1])
-      }
-    })
-    // return Promise.resolve(getServiceAll()).then((data) => {
-    //   return {
-    //     code: '200',
-    //     message: '',
-    //     data
-    //   }
-    // })
-  }
-
-  // baseServiceInit
 }
 export default new Model()
