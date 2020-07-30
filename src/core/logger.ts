@@ -7,11 +7,11 @@ var transport = new (DailyRotateFile)({
   maxSize: '200m',
   maxFiles: '14d'
 });
-const logger = winston.createLogger({
+const logger =       winston.createLogger({
   levels: winston.config.syslog.levels,
   format: winston.format.combine(
     winston.format.label({ label: 'server' }),
-    winston.format.simple(),
+       winston.format.simple(),
     winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     winston.format.printf(({ level, message, label, timestamp }) => {
       return `[${label}:${level}] ${message} (${timestamp})`;
@@ -19,5 +19,4 @@ const logger = winston.createLogger({
   ),
   transports: [new winston.transports.Console(), transport],
 });
-
 export default logger;
