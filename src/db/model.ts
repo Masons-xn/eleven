@@ -1,7 +1,14 @@
-import Mysql from './db'
+/*
+ * @Description:
+ * @Author: 希宁
+ * @Date: 2020-07-30 16:13:04
+ * @LastEditTime: 2020-12-28 11:14:23
+ * @LastEditors:
+ */
+import Mysql from "./db"
 let getModel = () => {
   let model: any = {}
-  let getBase = Mysql.exec('SELECT A.stTableName,B.stName,B.stType,B.stColumnName,B.stlength FROM `pt_model` as A LEFT JOIN `pt_model_basic_prop` as B on A.id = B.stModelId')
+  let getBase = Mysql.exec("SELECT A.id, A.stTableName,B.stName,B.stType,B.stColumnName,B.stlength FROM `pt_model` as A LEFT JOIN `pt_model_basic_prop` as B on A.id = B.stModelId")
   let getRelation = Mysql.exec(`SELECT
 	C.stTableName AS 'souModel',
 	B.stTableName AS 'destModel',
@@ -19,10 +26,11 @@ LEFT JOIN pt_model AS C ON A.stSouModelID = C.id`)
           model[item.stTableName].modelbase.push(item.stColumnName)
         } else {
           model[item.stTableName] = {
+            id: item.id,
             modelName: item.stTableName,
-            base: ['createTime', 'updateTime', item.stColumnName],
-            modelbase: ['createTime', 'updateTime', item.stColumnName],
-            relation: []
+            base: ["createTime", "updateTime", item.stColumnName],
+            modelbase: ["createTime", "updateTime", item.stColumnName],
+            relation: [],
           }
         }
       }

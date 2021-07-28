@@ -98,20 +98,21 @@ class QueryData extends ModelBase {
       //  当子模型存在多个关系时候 需要增加子查询 left jion 或出现重名报错
       //  子查询联合生成 as ModelWord
       //  查询结果方向解析的时候需要重新调整
+      //
       // if (destAll.indexOf(destName) > -1) {
       //   // return
       // }else{
       destAll.push(destName)
       if (item.inRelation === 1) {
-        const info = this.modelFiled(destName, soulName)
-        selectField += `,${info.filed.join(",")} ,${info.word}.${soulName}Id as ${this.getModelWord(destName, soulName)}_${soulName}Id`
-        selectArea += ` left join ${destName} as ${this.getModelWord(destName, soulName)} on ${info.word}.${soulName}Id = ${this.getModelWord(soulName, destName)}.id`
+        // 一对多
+        selectField += `,${this.modelFiled(destName).filed.join(",")} ,${this.getModelWord(destName)}.${soulName}Id as ${this.getModelWord(destName)}_${soulName}Id`
+        selectArea += ` left join ${destName} as ${this.getModelWord(destName)} on ${this.getModelWord(destName)}.${soulName}Id = ${this.getModelWord(soulName)}.id`
       } else {
-        const info = this.modelFiled(destName, soulName)
-        selectField += `,${info.filed.join(",")}`
-        baseField += `,${info.word}.${item.destModel}Id as ${this.getModelWord(soulName, destName)}_${destName}Id`
-        selectArea += ` left join ${destName} as ${this.getModelWord(destName, soulName)} on ${this.getModelWord(soulName, destName)}.${destName}Id = ${this.getModelWord(destName, soulName)}.id`
+        selectField += `,${this.modelFiled(destName).filed.join(",")}`
+        baseField += `,${this.getModelWord(soulName)}.${item.destModel}Id as ${this.getModelWord(soulName)}_${destName}Id`
+        selectArea += ` left join ${destName} as ${this.getModelWord(destName)} on ${this.getModelWord(soulName)}.${destName}Id = ${this.getModelWord(destName)}.id`
       }
+      // }
     })
     nSql = `select ${baseField} ${Array.from(new Set(selectField.split(","))).join(",")}  ${Array.from(new Set(selectArea.split("left"))).join("left")} `
     return nSql
@@ -156,6 +157,7 @@ class QueryData extends ModelBase {
       this.countsql = sql
       sql += orders
     } else {
+      //+ querylimitByPwoer(this)  order 前
       sql += this.getcondition(true) + querylimitByPwoer(this) + `order by ${this.getModelWord(this.priModel)}.createTime desc ` + this.getOrder() + (hasCount ? this.getLimit() : "")
     }
     console.log(sql)
@@ -231,7 +233,7 @@ class QueryData extends ModelBase {
     if (data.length === 0) {
       return newData
     }
-    data.forEach((item) => {
+    data.map((item) => {
       let dataSplic = this.dataRelation(item)
       for (let key in dataSplic) {
         if (!minData[key]) {
@@ -264,8 +266,8 @@ class QueryData extends ModelBase {
       }
     ): any {
       let assembleData: any = JSON.parse(JSON.stringify(data))
-      let sou = that.getModelWord(rel.souModel, rel.destModel)
-      let dest = that.getModelWord(rel.destModel, rel.souModel)
+      let sou = that.getModelWord(rel.souModel)
+      let dest = that.getModelWord(rel.destModel)
       let key = rel.stName
       let destData = data[dest]
       let souData = data[sou]

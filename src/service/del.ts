@@ -1,4 +1,4 @@
-import { ModelBase } from './modelbase'
+import { ModelBase } from "./modelbase"
 
 interface ModelRef {
   souModel: string
@@ -14,16 +14,16 @@ class Delete extends ModelBase {
   delIds: string[] = []
   refs: any[] = []
   constructor(model: any, priModel: string, param: any) {
-    super(model, priModel, param);
+    super(model, priModel, param)
   }
   delete() {
-    let ids = eval(this.param.data || [])
+    let ids = this.param.data || []
     if (ids.length === 0) {
-      this.setError('1001', '参数错误！')
+      this.setError("1001", "参数错误！")
     }
     ids.map((item: any) => {
-      if (typeof (item) !== 'string') {
-        this.setError('1001', '参数错误！')
+      if (typeof item !== "string") {
+        this.setError("1001", "参数错误！")
       }
     })
     this.delIds = ids
@@ -31,17 +31,17 @@ class Delete extends ModelBase {
 
     return this.getData().then((res: any) => {
       const things = this.DeleteData(res.data)
-      return Promise.resolve(this.Mysql.execTrans(things)).then(res => {
+      return Promise.resolve(this.Mysql.execTrans(things)).then((res) => {
         if (!res.err) {
           return {
-            code: '200',
-            data: res
+            code: "200",
+            data: res,
           }
         } else {
           return {
-            code: '500',
-            error: '',
-            msg: '参数异常',
+            code: "500",
+            error: "",
+            msg: "参数异常",
           }
         }
       })
@@ -50,15 +50,15 @@ class Delete extends ModelBase {
   DeleteData(del: any) {
     let trans: Array<any> = []
     for (let model of del) {
-      if (model['model'] && model['ids'].length > 0) {
+      if (model["model"] && model["ids"].length > 0) {
         trans.push({
           sql: (_results?: any) => {
             try {
-              return `delete from ${model['model']} where id in ("${model['ids'].join('","')}")`
+              return `delete from ${model["model"]} where id in ("${model["ids"].join('","')}")`
             } catch (e) {
               return {}
             }
-          }
+          },
         })
       }
     }
@@ -82,9 +82,9 @@ class Delete extends ModelBase {
             needDelIds += `"${item}",`
           })
           ref.map((item: ModelRef) => {
-            if (!refsHandled.some(ref => (ref.souModel === item.souModel && ref.destModel === item.destModel) || (ref.souModel === item.destModel && ref.destModel === item.souModel))) {
+            if (!refsHandled.some((ref) => (ref.souModel === item.souModel && ref.destModel === item.destModel) || (ref.souModel === item.destModel && ref.destModel === item.souModel))) {
               refsHandled.push(item)
-              let sql = ''
+              let sql = ""
               if (item.inRelation === 1) {
                 sql = `select id as ${item.destModel} from ${item.destModel} where ${item.souModel}Id in (${needDelIds.substr(0, needDelIds.length - 1)})`
               } else {
@@ -95,9 +95,9 @@ class Delete extends ModelBase {
           })
         }
       })
-      return Promise.resolve(this.Mysql.execMulit(sqls, [])).then(res => {
+      return Promise.resolve(this.Mysql.execMulit(sqls, [])).then((res) => {
         const needSelect: any = []
-        res.map((item: { err: any, results: any, fields: any }) => {
+        res.map((item: { err: any; results: any; fields: any }) => {
           if (item.results.length > 0) {
             const key = Object.keys(item.results[0])[0]
             needSelect.push({ model: key, ids: item.results.map((item: any) => item[key]) })
@@ -108,14 +108,14 @@ class Delete extends ModelBase {
         }
         if (!res.err) {
           return {
-            code: '200',
-            data: Alllist
+            code: "200",
+            data: Alllist,
           }
         } else {
           return {
-            code: '500',
-            error: '',
-            msg: '参数异常',
+            code: "500",
+            error: "",
+            msg: "参数异常",
           }
         }
       })
@@ -126,7 +126,7 @@ class Delete extends ModelBase {
     let refAll: string[] = []
     let rel: Array<any> = []
     const getRelationAll = (modelName: string) => {
-      const refs = this.getRelationModel(modelName)
+      const refs = this.getRelationModel(modelName).filter((item: any) => item.inRelation === 1) // 级联删除会删除一对多的
       let relInner: Array<any> = []
       if (refs.length > 0) {
         refs.map((item: { destModel: string }) => {
@@ -145,8 +145,7 @@ class Delete extends ModelBase {
 }
 export default (a: any, b: string, c: any) => {
   let data = new Delete(a, b, c).delete()
-  return Promise.resolve(data).then(res => {
+  return Promise.resolve(data).then((res) => {
     return res
   })
 }
-

@@ -1,9 +1,9 @@
-import { ModelBase } from './modelbase'
-import guid from '../utils/guid'
+import { ModelBase } from "./modelbase"
+import guid from "../utils/guid"
 
 class Add extends ModelBase {
   constructor(model: any, priModel: string, param: any) {
-    super(model, priModel, param);
+    super(model, priModel, param)
   }
   addData() {
     const datas = this.getDatas()
@@ -13,17 +13,17 @@ class Add extends ModelBase {
       })
     }
     const things = this.getThings(datas)
-    return Promise.resolve(this.Mysql.execTrans(things)).then(res => {
+    return Promise.resolve(this.Mysql.execTrans(things)).then((res) => {
       if (!res.err) {
         return {
-          code: '200',
-          data: res
+          code: "200",
+          data: res,
         }
       } else {
         return {
-          code: '500',
-          error: '',
-          msg: '参数异常',
+          code: "500",
+          error: "",
+          msg: "参数异常",
         }
       }
     })
@@ -49,17 +49,18 @@ class Add extends ModelBase {
             } catch (e) {
               return {}
             }
-          }
+          },
         })
       }
     }
     return trans
   }
   getDatas() {
-    let data = JSON.parse(JSON.stringify(this.param)).data || []
+    const params = JSON.parse(JSON.stringify(this.param)).data
+    const data = params.datas || []
     if (data.length === 0) {
       for (let i in this.param) {
-        if (typeof this.param[i] === 'object') {
+        if (typeof this.param[i] === "object") {
           data.push(this.param[i])
         }
       }
@@ -78,17 +79,17 @@ class Add extends ModelBase {
             }
             let rel = getRelByRelName(_model, key)
             if (rel.length > 0) {
-              if (typeof item[key] === 'object' && !Array.isArray(item[key])) {
+              if (typeof item[key] === "object" && !Array.isArray(item[key])) {
                 Datakeys[rel[0].destModel] = []
                 if (!item[key].id) {
                   const ids = guid()
-                  item[rel[0].destModel + 'Id'] = ids
+                  item[rel[0].destModel + "Id"] = ids
                   item[key].id = ids
                 }
 
                 tilingData(item[key], rel[0].destModel)
                 delete item[key]
-              } else if (typeof item[key] === 'object' && Array.isArray(item[key])) {
+              } else if (typeof item[key] === "object" && Array.isArray(item[key])) {
                 let child = item[key]
                 child.map((ch: any) => {
                   if (!ch.id) {
@@ -108,16 +109,16 @@ class Add extends ModelBase {
       } else {
         for (let key in data) {
           let rel = getRelByRelName(_model, key)
-          if (typeof data[key] === 'object' && !Array.isArray(data[key]) && data[key] !== null) {
+          if (typeof data[key] === "object" && !Array.isArray(data[key]) && data[key] !== null) {
             Datakeys[rel[0].destModel] = []
             if (!data[key].id) {
               const ids = guid()
-              data[rel[0].destModel + 'Id'] = ids
+              data[rel[0].destModel + "Id"] = ids
               data[key].id = ids
               const dataNext = data[key]
               tilingData(dataNext, rel[0].destModel)
             }
-          } else if (typeof data[key] === 'object' && Array.isArray(data[key])) {
+          } else if (typeof data[key] === "object" && Array.isArray(data[key])) {
             let child = data[key]
             child.map((ch: any) => {
               if (!ch.id) {
@@ -133,11 +134,10 @@ class Add extends ModelBase {
         }
         Datakeys[_model].push(data)
       }
-
     }
 
     let getRelByRelName = (_model: string, relName: string) => {
-      return that.model[_model].relation.filter((item: { stName: string; destModel: string; souModel: string; }) => {
+      return that.model[_model].relation.filter((item: { stName: string; destModel: string; souModel: string }) => {
         return item.destModel === relName && item.souModel === _model
       })
     }
@@ -148,34 +148,35 @@ class Add extends ModelBase {
     let id = guid()
     let baseField = JSON.parse(JSON.stringify(this.model[model])).base
     baseField.unshift(`id`)
-    const rel = this.model[model].relation.filter((item: { inRelation: Number; }) => {
+    const rel = this.model[model].relation.filter((item: { inRelation: Number }) => {
       return item.inRelation === 0
     })
-    rel.map((item: { destModel: any; }) => {
+    rel.map((item: { destModel: any }) => {
       baseField.push(`${item.destModel}Id`)
     })
-    let updateSql = ''
+    let updateSql = ""
     baseField.map((item: any) => {
       updateSql += `${item}=values(${item}),`
     })
-    let allValues = ''
-    datas.map(data => {
+    let allValues = ""
+
+    datas.map((data) => {
       let insertData: any = []
       if (data && !data.id) {
         insertData.push(`'${id}'`)
       } else {
-        insertData.push(`'${data['id']}'`)
+        insertData.push(`'${data["id"]}'`)
       }
       for (let key of baseField) {
-        if (key === 'createTime') {
-          insertData.push(`'${new Date(data[key] || new Date()).toLocaleString()}'`)
-        } else if (key === 'updateTime') {
-          insertData.push(`'${new Date().toLocaleString()}'`)
-        } else if (key !== 'id') {
-          insertData.push(`'${data[key] || ""}'`)
+        if (key === "createTime") {
+          insertData.push(`'${this.dateFormat(data[key] || new Date())}'`)
+        } else if (key === "updateTime") {
+          insertData.push(`'${this.dateFormat(new Date())}'`)
+        } else if (key !== "id") {
+          insertData.push(`'${data[key] === undefined || data[key] === "undefined" || data[key] === null || data[key] === "" ? "" : data[key]}'`)
         }
       }
-      allValues += `(${insertData.join(',')}),`
+      allValues += `(${insertData.join(",")}),`
     })
     var sql: string = `insert into ${model} (${baseField}) values ${allValues.substr(0, allValues.length - 1)} on duplicate key update ${updateSql.substr(0, updateSql.length - 1)}`
     return sql
@@ -183,9 +184,7 @@ class Add extends ModelBase {
 }
 export default (a: any, b: string, c: any) => {
   let data = new Add(a, b, c).addData()
-  return Promise.resolve(data).then(res => {
+  return Promise.resolve(data).then((res) => {
     return res
   })
 }
-
-
