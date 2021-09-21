@@ -61,7 +61,7 @@
     "nodejs-websocket": "^1.7.2",
     "socket.io": "^3.0.1",
     "sqlstring": "^2.3.2",
-    "ssh2": "^0.8.9",
+    "ssh2": "^1.4.0",
     "stream-array": "^1.1.2",
     "tunnel": "^0.0.6",
     "utf8": "^3.0.0",
